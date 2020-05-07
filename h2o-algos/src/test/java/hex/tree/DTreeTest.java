@@ -105,7 +105,7 @@ public class DTreeTest {
         se_max_pred += (max_pred - ys[i]) * (max_pred - ys[i]);
       }
     }
-    hs.updateHisto(ws, null, cs, ys, null, rows, N, 0);
+    hs.updateHisto(ws, new double[N], cs, ys, null, rows, N, 0);
     
     if (na_percent == 1.0) {
       return new ExpectedSplitInfo(NASplitDir.NAvsREST, se, se_max_pred, se_min_pred);

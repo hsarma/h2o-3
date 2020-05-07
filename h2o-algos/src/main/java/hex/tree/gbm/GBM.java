@@ -95,7 +95,8 @@ public class GBM extends SharedTree<GBMModel,GBMModel.GBMParameters,GBMModel.GBM
         error("_offset_column", "Offset is not supported for "+_parms._distribution+" distribution.");
       }
       if (_parms._monotone_constraints != null && _parms._monotone_constraints.length > 0 &&
-              !(DistributionFamily.gaussian.equals(_parms._distribution) || DistributionFamily.bernoulli.equals(_parms._distribution))) {
+              !(DistributionFamily.gaussian.equals(_parms._distribution) || 
+                      DistributionFamily.bernoulli.equals(_parms._distribution) || DistributionFamily.tweedie.equals(_parms._distribution))) {
         error("_monotone_constraints", "Monotone constraints are only supported for Gaussian and Bernoulli distributions, your distribution: " + _parms._distribution + ".");
       }
 
@@ -615,7 +616,7 @@ public class GBM extends SharedTree<GBMModel,GBMModel.GBMParameters,GBMModel.GBM
           LeafNode leafNode = (LeafNode) ktrees[k].node(leafs[k] + i);
           final double gamma;
           if (useSplitPredictions) {
-            gamma = leafNode.getSplitPrediction();
+            gamma = cs._dist.link(leafNode.getSplitPrediction());
           } else {
             gamma = gp.gamma(k, i);
           }
@@ -1125,16 +1126,19 @@ public class GBM extends SharedTree<GBMModel,GBMModel.GBMParameters,GBMModel.GBM
           continue;
         for (int row = 0; row < nids._len; row++) { // For all rows
           double w = weights.atd(row);
-          if (w == 0) continue;
+          if (w == 0)
+            continue;
 
           double y = resp.atd(row); //response
-          if (Double.isNaN(y)) continue;
+          if (Double.isNaN(y)) 
+            continue;
 
           // Compute numerator and denominator of terminal node estimate (gamma)
           int nid = (int) nids.at8(row);          // Get Node to decide from
           final boolean wasOOBRow = ScoreBuildHistogram.isOOBRow(nid); //same for all k
           if (wasOOBRow) nid = ScoreBuildHistogram.oob2Nid(nid);
-          if (nid < 0) continue;
+          if (nid < 0) 
+            continue;
           DecidedNode dn = tree.decided(nid);           // Must have a decision point
           if (dn._split == null)                    // Unable to decide?
             dn = tree.decided(dn.pid());  // Then take parent's decision

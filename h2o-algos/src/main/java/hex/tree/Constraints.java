@@ -1,21 +1,23 @@
 package hex.tree;
 
+import hex.Distribution;
 import hex.genmodel.utils.DistributionFamily;
 import water.Iced;
+import water.util.ArrayUtils;
 
 public class Constraints extends Iced<Constraints> {
 
   private final int[] _cs;
   final double _min;
   final double _max;
-  final DistributionFamily _dist;
+  public final Distribution _dist;
   private final boolean _use_bounds;
 
-  public Constraints(int[] cs, DistributionFamily dist, boolean useBounds) {
+  public Constraints(int[] cs, Distribution dist, boolean useBounds) {
     this(cs, dist, useBounds, Double.NaN, Double.NaN);
   }
 
-  private Constraints(int[] cs, DistributionFamily dist, boolean useBounds, double min, double max) {
+  private Constraints(int[] cs, Distribution dist, boolean useBounds, double min, double max) {
     _cs = cs;
     _min = min;
     _max = max;
@@ -63,7 +65,15 @@ public class Constraints extends Iced<Constraints> {
   }
 
   public boolean needsGammaDenum() {
-    return !_dist.equals(DistributionFamily.gaussian);
+    return !_dist._family.equals(DistributionFamily.gaussian);
   }
 
+  public boolean needsGammaNom() {
+    return _dist._family.equals(DistributionFamily.tweedie);
+  }
+  
+  public boolean isEmpty() {
+    return ArrayUtils.sum(_cs) == 0;
+  }
+  
 }

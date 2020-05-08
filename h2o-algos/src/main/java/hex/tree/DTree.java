@@ -891,8 +891,6 @@ public class DTree extends Iced {
       }
     }
     final double wNA = hs.wNA();
-    final double denNA = hasDenom ? hs.denNA() : wNA;
-    final double nomNA = hasNomin ? hs.nomNA() : wNA;
     double tot = wlo[nbins] + wNA; //total number of (weighted) rows
     // Is any split possible with at least min_obs?
     if( tot < 2*min_rows ) {
@@ -909,6 +907,9 @@ public class DTree extends Iced {
       if (SharedTree.DEV_DEBUG) Log.info("can't split " + hs._name + ": var = 0.");
       return null;
     }
+
+    final double denNA = hasDenom ? hs.denNA() : wNA;
+    final double nomNA = hasNomin ? hs.nomNA() : wYNA;
     
     // Compute mean/var for cumulative bins from nbins to 0 inclusive.
     double   whi[] = MemoryManager.malloc8d(nbins+1);

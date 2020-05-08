@@ -64,16 +64,12 @@ public class Constraints extends Iced<Constraints> {
     return Math.max(old_min, proposed_min);
   }
 
-  public boolean needsGammaDenum() {
+  boolean needsGammaDenom() {
     return !_dist._family.equals(DistributionFamily.gaussian);
   }
 
-  public boolean needsGammaNom() {
+  boolean needsGammaNom() {
     return _dist._family.equals(DistributionFamily.tweedie);
-  }
-  
-  public boolean isEmpty() {
-    return ArrayUtils.sum(_cs) == 0;
   }
   
 }

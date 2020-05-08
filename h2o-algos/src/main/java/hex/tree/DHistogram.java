@@ -193,7 +193,7 @@ public final class DHistogram extends Iced {
     if (cs != null) {
       _pred1 = cs._min;
       _pred2 = cs._max;
-      if (!cs.needsGammaDenum() && !cs.needsGammaNom()) {
+      if (!cs.needsGammaDenom() && !cs.needsGammaNom()) {
         _vals_dim = Double.isNaN(_pred1) && Double.isNaN(_pred2) ? 3 : 5;
         _dist = null; // intentionally cause NPE if used incorrectly
       } else if (!cs.needsGammaNom()) {

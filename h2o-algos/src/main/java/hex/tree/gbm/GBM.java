@@ -616,7 +616,7 @@ public class GBM extends SharedTree<GBMModel,GBMModel.GBMParameters,GBMModel.GBM
           LeafNode leafNode = (LeafNode) ktrees[k].node(leafs[k] + i);
           final double gamma;
           if (useSplitPredictions) {
-            gamma = cs._dist.link(leafNode.getSplitPrediction());
+            gamma = gp.gamma(leafNode.getSplitPrediction());
           } else {
             gamma = gp.gamma(k, i);
           }
@@ -1080,9 +1080,14 @@ public class GBM extends SharedTree<GBMModel,GBMModel.GBMParameters,GBMModel.GBM
     }
 
     double gamma(int tree, int nid, double num) {
-      if (_denom[tree][nid] == 0) return 0;
+      if (_denom[tree][nid] == 0)
+        return 0;
       double g = num / _denom[tree][nid];
-      assert (!Double.isInfinite(g) && !Double.isNaN(g));
+      assert !Double.isInfinite(g) && !Double.isNaN(g);
+      return gamma(g);
+    }
+    
+    double gamma(double g) {
       if (_dist._family == DistributionFamily.poisson ||
               _dist._family == DistributionFamily.gamma ||
               _dist._family == DistributionFamily.tweedie) {

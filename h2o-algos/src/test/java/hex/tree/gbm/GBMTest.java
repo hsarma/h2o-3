@@ -216,13 +216,6 @@ public class GBMTest extends TestUtil {
 
   }
 
-  @Test
-  public void testBasicTweedie() {
-    basicGBM("./smalldata/junit/cars.csv",
-            new PrepData() { int prep(Frame fr ) {fr.remove("name").remove(); return ~fr.find("economy (mpg)"); }},
-            false, DistributionFamily.tweedie);
-  }
-
   @Test public void testBasicGBM() {
     // Regression tests
     basicGBM("./smalldata/junit/cars.csv",
@@ -3693,6 +3686,15 @@ public class GBMTest extends TestUtil {
 
   @Test
   public void testMonotoneConstraintsProstate() {
+    checkMonotoneConstraintsProstate(DistributionFamily.tweedie);
+  }
+
+  @Test
+  public void testMonotoneConstraintsProstateTweedie() {
+    checkMonotoneConstraintsProstate(DistributionFamily.gaussian);
+  }
+
+  private void checkMonotoneConstraintsProstate(DistributionFamily distributionFamily) {
     try {
       Scope.enter();
       Frame f = Scope.track(parse_test_file("smalldata/logreg/prostate.csv"));
@@ -3706,6 +3708,7 @@ public class GBMTest extends TestUtil {
       parms._ignored_columns = new String[]{"ID"};
       parms._ntrees = 50;
       parms._seed = 42;
+      parms._distribution = distributionFamily;
 
       String[] uniqueAges = Scope.track(f.vec("AGE").toCategoricalVec()).domain();
 
